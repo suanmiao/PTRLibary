@@ -1,4 +1,4 @@
-package me.suanmiao.ptrListview.footer;
+package me.suanmiao.ptrlistview.footer;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,7 +8,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import me.suanmiao.ptrListview.R;
+import me.suanmiao.ptrlistview.R;
 
 /**
  * Created by suanmiao on 15/2/27.

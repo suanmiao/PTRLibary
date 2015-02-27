@@ -19,7 +19,7 @@ import me.suanmiao.common.io.http.robospiece.api.BaseFormResult;
 import me.suanmiao.common.ui.adapter.listview.BaseListAdapter;
 import me.suanmiao.common.ui.fragment.AbstractBaseFragment;
 import me.suanmiao.common.ui.mvc.ViewModel.BaseViewModel;
-import me.suanmiao.ptrListview.PtrListView;
+import me.suanmiao.ptrlistview.PtrListView;
 import me.suanmiao.ptrexample.R;
 import me.suanmiao.ptrexample.io.http.requests.ChannelRequest;
 import me.suanmiao.ptrexample.ui.adapter.listview.ExampleListAdapter;

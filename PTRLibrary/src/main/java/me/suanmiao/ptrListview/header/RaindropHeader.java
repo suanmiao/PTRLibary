@@ -1,4 +1,4 @@
-package me.suanmiao.ptrListview.header;
+package me.suanmiao.ptrlistview.header;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -15,8 +15,8 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
-import me.suanmiao.ptrListview.IPullToRefresh;
-import me.suanmiao.ptrListview.R;
+import me.suanmiao.ptrlistview.IPullToRefresh;
+import me.suanmiao.ptrlistview.R;
 
 
 /**

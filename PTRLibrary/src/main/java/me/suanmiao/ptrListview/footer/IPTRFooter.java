@@ -1,4 +1,4 @@
-package me.suanmiao.ptrListview.footer;
+package me.suanmiao.ptrlistview.footer;
 
 import android.view.View;
 

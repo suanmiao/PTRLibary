@@ -1,4 +1,4 @@
-package me.suanmiao.ptrListview.header;
+package me.suanmiao.ptrlistview.header;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -9,8 +9,8 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import me.suanmiao.ptrListview.IPullToRefresh;
-import me.suanmiao.ptrListview.R;
+import me.suanmiao.ptrlistview.IPullToRefresh;
+import me.suanmiao.ptrlistview.R;
 
 /**
  * Created by suanmiao on 15/2/27.

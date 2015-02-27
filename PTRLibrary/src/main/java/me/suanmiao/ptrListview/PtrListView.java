@@ -1,4 +1,4 @@
-package me.suanmiao.ptrListview;
+package me.suanmiao.ptrlistview;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,10 +10,10 @@ import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import me.suanmiao.ptrListview.footer.DefaultFooter;
-import me.suanmiao.ptrListview.footer.IPTRFooter;
-import me.suanmiao.ptrListview.header.DefaultHeader;
-import me.suanmiao.ptrListview.header.IPTRHeader;
+import me.suanmiao.ptrlistview.footer.DefaultFooter;
+import me.suanmiao.ptrlistview.footer.IPTRFooter;
+import me.suanmiao.ptrlistview.header.DefaultHeader;
+import me.suanmiao.ptrlistview.header.IPTRHeader;
 
 
 /**
@@ -32,11 +32,10 @@ public class PtrListView extends ListView implements
   private int startY;
   private boolean lastItemVisibile = false;
 
-  // 用于保证startY的值在一个完整的touch事件中只被记录一次
   private boolean isRecorded;
 
   /**
-   * continous mode
+   * continuous mode
    */
   private float lastY;
   private float currentPullingY;

@@ -1,4 +1,4 @@
-package me.suanmiao.ptrListview;
+package me.suanmiao.ptrlistview;
 
 /**
  * Created by suanmiao on 14-11-3.

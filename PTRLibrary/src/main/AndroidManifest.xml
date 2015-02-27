@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.suanmiao.ptrListview">
+    package="me.suanmiao.ptrlistview">
 
     <application android:allowBackup="true" />
 

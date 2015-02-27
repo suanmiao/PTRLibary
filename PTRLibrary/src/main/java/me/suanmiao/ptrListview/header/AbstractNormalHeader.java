@@ -1,4 +1,4 @@
-package me.suanmiao.ptrListview.header;
+package me.suanmiao.ptrlistview.header;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
