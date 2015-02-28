@@ -19,10 +19,10 @@ import me.suanmiao.ptrlistview.header.IPTRHeader;
 /**
  * Created by lhk on 2/6/14.
  */
-public class PtrListView extends ListView implements
+public class PTRListView extends ListView implements
     AbsListView.OnScrollListener, IPullToRefresh {
 
-  private final static float ratio = 2.0f;
+  private final static float PULL_RATIO = 2.0f;
   private IPTRHeader mHeader;
   private IPTRFooter mFooter;
 
@@ -30,7 +30,7 @@ public class PtrListView extends ListView implements
    * normal mode
    */
   private int startY;
-  private boolean lastItemVisibile = false;
+  private boolean lastItemVisible = false;
 
   private boolean isRecorded;
 
@@ -39,7 +39,6 @@ public class PtrListView extends ListView implements
    */
   private float lastY;
   private float currentPullingY;
-
 
   private OnRefreshListener refreshListener;
   private OnLoadListener onLoadListener;
@@ -56,17 +55,17 @@ public class PtrListView extends ListView implements
 
   private static final int VISIBLE_SLOP = 30;
 
-  public PtrListView(Context context) {
+  public PTRListView(Context context) {
     super(context);
     init(context);
   }
 
-  public PtrListView(Context context, AttributeSet attrs) {
+  public PTRListView(Context context, AttributeSet attrs) {
     super(context, attrs);
     init(context);
   }
 
-  public PtrListView(Context context, AttributeSet attrs, int defStyle) {
+  public PTRListView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
     init(context);
   }
@@ -81,7 +80,6 @@ public class PtrListView extends ListView implements
     mFooter = new DefaultFooter(getContext());
     mHeader = new DefaultHeader(getContext());
     addHeaderView(mHeader.getHeaderLayout());
-
     addFooterView(mFooter.getFooterLayout());
   }
 
@@ -95,7 +93,6 @@ public class PtrListView extends ListView implements
   }
 
   private boolean continuousTouch(MotionEvent ev) {
-    // Log.e("SUAN", ev.getAction() + " amount: " + ev.getPointerCount());
     if (catchMotionEvent && refreshEnable) {
       float currentY = ev.getY();
       if (ev.getPointerCount() >= 2 && ev.getY(1) < currentY) {
@@ -138,30 +135,30 @@ public class PtrListView extends ListView implements
               // ensure the section is always the first one
               setSelection(0);
               if (currentPullingY > 0) {
-                if (currentPullingY / ratio < mHeader.getHeaderRefreshingHeight()) {
+                if (currentPullingY / PULL_RATIO < mHeader.getHeaderRefreshingHeight()) {
                   refreshState = REFRESH_STATE.PULL_TO_REFRESH;
                 }
               } else {
                 refreshState = REFRESH_STATE.DONE;
               }
-              setPullProgress(currentPullingY / ratio
+              setPullProgress(currentPullingY / PULL_RATIO
                   / (float) mHeader.getHeaderRefreshingHeight());
               break;
             case PULL_TO_REFRESH:
               setSelection(0);
-              if (currentPullingY / ratio >= mHeader.getHeaderRefreshingHeight()) {
+              if (currentPullingY / PULL_RATIO >= mHeader.getHeaderRefreshingHeight()) {
                 // change state to rtr
                 refreshState = REFRESH_STATE.RELEASE_TO_REFRESH;
               } else if (currentPullingY <= 0) {
                 refreshState = REFRESH_STATE.DONE;
               }
-              setPullProgress(currentPullingY / ratio
+              setPullProgress(currentPullingY / PULL_RATIO
                   / (float) mHeader.getHeaderRefreshingHeight());
               break;
             case DONE:
               if (currentPullingY > 0) {
                 refreshState = REFRESH_STATE.PULL_TO_REFRESH;
-                setPullProgress((currentPullingY) / ratio
+                setPullProgress((currentPullingY) / PULL_RATIO
                     / (float) mHeader.getHeaderRefreshingHeight());
               }
               break;
@@ -181,7 +178,6 @@ public class PtrListView extends ListView implements
   }
 
   private boolean normalTouch(MotionEvent ev) {
-    // Log.e("SUAN", ev.getAction() + " amount: " + ev.getPointerCount());
     if (catchMotionEvent && refreshEnable) {
       switch (ev.getAction()) {
         case MotionEvent.ACTION_DOWN:
@@ -219,30 +215,30 @@ public class PtrListView extends ListView implements
               // ensure the section is always the first one
               setSelection(0);
               if ((tempY - startY) > 0) {
-                if ((tempY - startY) / ratio < mHeader.getHeaderRefreshingHeight()) {
+                if ((tempY - startY) / PULL_RATIO < mHeader.getHeaderRefreshingHeight()) {
                   refreshState = REFRESH_STATE.PULL_TO_REFRESH;
                 }
               } else {
                 refreshState = REFRESH_STATE.DONE;
               }
-              setPullProgress((tempY - startY) / ratio
+              setPullProgress((tempY - startY) / PULL_RATIO
                   / (float) mHeader.getHeaderRefreshingHeight());
               break;
             case PULL_TO_REFRESH:
               setSelection(0);
-              if ((tempY - startY) / ratio >= mHeader.getHeaderRefreshingHeight()) {
+              if ((tempY - startY) / PULL_RATIO >= mHeader.getHeaderRefreshingHeight()) {
                 // change state to rtr
                 refreshState = REFRESH_STATE.RELEASE_TO_REFRESH;
               } else if (tempY - startY <= 0) {
                 refreshState = REFRESH_STATE.DONE;
               }
-              setPullProgress((tempY - startY) / ratio
+              setPullProgress((tempY - startY) / PULL_RATIO
                   / (float) mHeader.getHeaderRefreshingHeight());
               break;
             case DONE:
               if (tempY > startY) {
                 refreshState = REFRESH_STATE.PULL_TO_REFRESH;
-                setPullProgress((tempY - startY) / ratio
+                setPullProgress((tempY - startY) / PULL_RATIO
                     / (float) mHeader.getHeaderRefreshingHeight());
               }
               break;
@@ -370,7 +366,7 @@ public class PtrListView extends ListView implements
 
   @Override
   public void onScrollStateChanged(AbsListView view, int scrollState) {
-    if (scrollState == SCROLL_STATE_IDLE && lastItemVisibile && onLoadListener != null
+    if (scrollState == SCROLL_STATE_IDLE && lastItemVisible && onLoadListener != null
         && itemTakeFullPage() && loadEnable) {
       onLoadListener.onLastItemVisible();
     }
@@ -408,7 +404,7 @@ public class PtrListView extends ListView implements
     // when list is empty
     catchMotionEvent = firstVisibleItem == 0;
 
-    lastItemVisibile = firstVisibleItem + visibleItemCount >= totalItemCount;
+    lastItemVisible = firstVisibleItem + visibleItemCount >= totalItemCount;
     if (mScrollListener != null) {
       mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount,
           totalItemCount);

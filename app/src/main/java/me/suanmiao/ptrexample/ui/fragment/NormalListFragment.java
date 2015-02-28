@@ -20,7 +20,7 @@ import me.suanmiao.ptrexample.R;
 import me.suanmiao.ptrexample.ui.adapter.listview.ExampleListAdapter;
 import me.suanmiao.ptrexample.ui.mvc.Model.ArticleModel;
 import me.suanmiao.ptrexample.ui.mvc.Model.ExampleItemModel;
-import me.suanmiao.ptrlistview.PtrListView;
+import me.suanmiao.ptrlistview.PTRListView;
 
 
 /**
@@ -29,7 +29,7 @@ import me.suanmiao.ptrlistview.PtrListView;
 public class NormalListFragment extends AbstractBaseFragment {
 
   @InjectView(R.id.list_main_article)
-  PtrListView listMainArticle;
+  PTRListView listMainArticle;
 
   private ExampleListAdapter listAdapter;
   private static final int ITEM_COUNT_PER_REQUEST = 20;
@@ -114,14 +114,14 @@ public class NormalListFragment extends AbstractBaseFragment {
         }
       };
 
-  private PtrListView.OnRefreshListener refreshListener = new PtrListView.OnRefreshListener() {
+  private PTRListView.OnRefreshListener refreshListener = new PTRListView.OnRefreshListener() {
     @Override
     public void onRefresh() {
       refreshData();
     }
   };
 
-  private PtrListView.OnLoadListener loadListener = new PtrListView.OnLoadListener() {
+  private PTRListView.OnLoadListener loadListener = new PTRListView.OnLoadListener() {
     @Override
     public void onLastItemVisible() {
       loadData();

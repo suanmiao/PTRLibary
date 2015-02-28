@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    <me.suanmiao.ptrlistview.PtrListView
+    <me.suanmiao.ptrlistview.PTRListView
         android:id="@+id/list_main_article"
         android:divider="@null"
         android:scrollbars="none"

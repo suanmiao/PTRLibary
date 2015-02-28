@@ -3,12 +3,12 @@ package me.suanmiao.ptrlistview.header;
 import android.view.View;
 
 import me.suanmiao.ptrlistview.IPullToRefresh;
-import me.suanmiao.ptrlistview.PtrListView;
+import me.suanmiao.ptrlistview.PTRListView;
 
 /**
  * Created by suanmiao on 14-11-3.
  */
-public interface IPTRHeader extends PtrListView.PullProgressListener {
+public interface IPTRHeader extends PTRListView.PullProgressListener {
 
   /**
    * 
