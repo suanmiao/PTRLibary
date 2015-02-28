@@ -12,16 +12,23 @@ import java.util.List;
 import butterknife.InjectView;
 import me.suanmiao.ptrexample.R;
 import me.suanmiao.ptrexample.ui.adapter.pager.FragmentPagerAdapter;
-import me.suanmiao.ptrexample.ui.fragment.ArticleListFragment;
+import me.suanmiao.ptrexample.ui.fragment.ContinuousPullingListFragment;
+import me.suanmiao.ptrexample.ui.fragment.NormalListFragment;
+import me.suanmiao.ptrexample.ui.fragment.RainDropListFragment;
 
 
 public class MainActivity extends BaseToolbarActivity {
 
-  public static final int INDEX_ARTICLE_LIST = 0;
-  public static final int INDEX_SQUARE = 1;
-  public static final int INDEX_ME = 2;
-  @InjectView(R.id.ic_main_actionbar_article)
-  ImageView icMainActionbarArticle;
+  public static final int INDEX_NORMAL = 0;
+  public static final int INDEX_RAINDROP = 1;
+  public static final int INDEX_CONTINUOUS = 2;
+  @InjectView(R.id.ic_main_normal)
+  ImageView icMainNormal;
+  @InjectView(R.id.ic_main_raindrop)
+  ImageView icMainRaindrop;
+  @InjectView(R.id.ic_main_continuous)
+  ImageView icMainContinuous;
+
   @InjectView(R.id.toolbar_base)
   Toolbar toolbarMain;
   @InjectView(R.id.viewpager_main)
@@ -39,10 +46,12 @@ public class MainActivity extends BaseToolbarActivity {
 
   private void initWidgets() {
     setupActionBar();
-    icMainActionbarArticle.setSelected(true);
+    icMainNormal.setSelected(true);
 
     List<Fragment> contentFragmentList = new ArrayList<Fragment>();
-    contentFragmentList.add(new ArticleListFragment());
+    contentFragmentList.add(new NormalListFragment());
+    contentFragmentList.add(new RainDropListFragment());
+    contentFragmentList.add(new ContinuousPullingListFragment());
     FragmentPagerAdapter fragmentPagerAdapter =
         new FragmentPagerAdapter(getSupportFragmentManager(), contentFragmentList);
     viewpagerMain.setAdapter(fragmentPagerAdapter);
@@ -50,24 +59,47 @@ public class MainActivity extends BaseToolbarActivity {
 
     viewpagerMain.setOnPageChangeListener(pageChangeListener);
 
-    icMainActionbarArticle.setOnClickListener(new View.OnClickListener() {
+    icMainNormal.setOnClickListener(new View.OnClickListener() {
+
       @Override
       public void onClick(View v) {
-        selectItem(INDEX_ARTICLE_LIST);
+        selectItem(INDEX_NORMAL);
+      }
+    });
+
+    icMainRaindrop.setOnClickListener(new View.OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+        selectItem(INDEX_RAINDROP);
+      }
+    });
+
+    icMainContinuous.setOnClickListener(new View.OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+        selectItem(INDEX_CONTINUOUS);
       }
     });
   }
 
   private void selectItem(int index) {
     switch (index) {
-      case INDEX_ARTICLE_LIST:
-        icMainActionbarArticle.setSelected(true);
+      case INDEX_NORMAL:
+        icMainNormal.setSelected(true);
+        icMainRaindrop.setSelected(false);
+        icMainContinuous.setSelected(false);
         break;
-      case INDEX_SQUARE:
-        icMainActionbarArticle.setSelected(false);
+      case INDEX_RAINDROP:
+        icMainNormal.setSelected(false);
+        icMainRaindrop.setSelected(true);
+        icMainContinuous.setSelected(false);
         break;
-      case INDEX_ME:
-        icMainActionbarArticle.setSelected(false);
+      case INDEX_CONTINUOUS:
+        icMainNormal.setSelected(false);
+        icMainRaindrop.setSelected(false);
+        icMainContinuous.setSelected(true);
         break;
     }
     if (viewpagerMain.getCurrentItem() != index) {

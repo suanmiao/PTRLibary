@@ -295,15 +295,6 @@ public class PtrListView extends ListView implements
     this.loadEnable = loadEnable;
   }
 
-  public void setHeaderLayout(IPTRHeader header) {
-    if (this.mHeader != null) {
-      removeHeaderView(this.mHeader.getHeaderLayout());
-    }
-    this.mHeader = header;
-    mHeader.onInit();
-    addHeaderView(header.getHeaderLayout(), null, false);
-  }
-
   @Override
   public REFRESH_STATE getRefreshState() {
     return refreshState;
@@ -346,6 +337,26 @@ public class PtrListView extends ListView implements
   @Override
   public boolean isLoading() {
     return isLoading;
+  }
+
+  @Override
+  public void setHeader(IPTRHeader header) {
+    if (this.mHeader != null) {
+      removeHeaderView(this.mHeader.getHeaderLayout());
+    }
+    this.mHeader = header;
+    mHeader.onInit();
+    addHeaderView(header.getHeaderLayout(), null, false);
+  }
+
+  @Override
+  public void setFooter(IPTRFooter footer) {
+    if (this.mFooter != null) {
+      removeFooterView(this.mFooter.getFooterLayout());
+    }
+    this.mFooter = footer;
+    mHeader.onInit();
+    addFooterView(footer.getFooterLayout(), null, false);
   }
 
   @Override

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">CommonLib demo</string>
+    <string name="app_name">PTRListView demo</string>
+    <string name="gift_text">Congratulations!\n you pull to the end </string>
 
 </resources>

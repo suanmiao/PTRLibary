@@ -6,9 +6,20 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
-    <View
+    <TextView
+        android:id="@+id/text_gift"
+        android:text="@string/gift_text"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:textColor="@color/gray_c7"
         android:layout_centerHorizontal="true"
-        android:background="#293487"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:layout_below="@id/text_gift"
+        android:layout_centerHorizontal="true"
+        android:background="@color/gray_c7"
         android:id="@+id/ic_neck"
         android:layout_width="40dp"
         android:layout_height="300dp"/>

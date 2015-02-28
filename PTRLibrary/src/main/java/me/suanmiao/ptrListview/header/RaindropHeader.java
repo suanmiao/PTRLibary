@@ -29,6 +29,7 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
   private boolean shrinking = false;
   private boolean inChangeable = false;
   private int paddingTop;
+  private int waterDropMaringTop;
 
   private int waterDropHeight;
   private int waterDropWidth;
@@ -70,6 +71,7 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
     contentFillColor = getResources().getColor(R.color.water_drop_fill_color);
     outlineColor = getResources().getColor(R.color.water_drop_border_color);
     waterDropWidth = getResources().getDimensionPixelSize(R.dimen.water_drop_width);
+    waterDropMaringTop = getResources().getDimensionPixelSize(R.dimen.water_drop_margin_top);
     waterDropHeight = getResources().getDimensionPixelSize(R.dimen.water_drop_width);
     waterDropPaddingBottom =
         getResources().getDimensionPixelSize(R.dimen.water_drop_padding_bottom);
@@ -91,8 +93,8 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
         if (!shrinking && !inChangeable) {
           if (dropHeight > getResources().getDimensionPixelSize(R.dimen.water_drop_max_height)) {
             shrink();
-          } else if (dropHeight >= waterDropWidth) {
-            this.waterDropHeight = dropHeight;
+          } else if (dropHeight >= waterDropWidth+waterDropMaringTop) {
+            this.waterDropHeight = dropHeight-waterDropMaringTop;
           }
           invalidate();
         }
@@ -105,8 +107,8 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
         if (!shrinking && !inChangeable) {
           if (dropHeight > getResources().getDimensionPixelSize(R.dimen.water_drop_max_height)) {
             shrink();
-          } else if (dropHeight >= waterDropWidth) {
-            this.waterDropHeight = dropHeight;
+          } else if (dropHeight >= waterDropWidth+waterDropMaringTop) {
+            this.waterDropHeight = dropHeight-waterDropMaringTop;
           }
           invalidate();
         }
@@ -167,7 +169,7 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
 
   @Override
   public int getHeaderRefreshingHeight() {
-    return getResources().getDimensionPixelSize(R.dimen.water_drop_height);
+    return getResources().getDimensionPixelSize(R.dimen.water_drop_refreshing_height);
   }
 
   @Override
@@ -409,9 +411,9 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
 
     // draw outline
     paint.setColor(outlineColor);
-    paint.setStyle(Paint.Style.STROKE);
-    paint.setStrokeWidth(getResources().getDimensionPixelSize(
-        R.dimen.water_drop_border_stroke_width));
+    paint.setStyle(Paint.Style.FILL);
+//    paint.setStrokeWidth(getResources().getDimensionPixelSize(
+//        R.dimen.water_drop_border_stroke_width));
     canvas.drawPath(outlinePath, paint);
   }
 

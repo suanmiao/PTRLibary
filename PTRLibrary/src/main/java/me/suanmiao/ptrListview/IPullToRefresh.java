@@ -1,5 +1,8 @@
 package me.suanmiao.ptrlistview;
 
+import me.suanmiao.ptrlistview.footer.IPTRFooter;
+import me.suanmiao.ptrlistview.header.IPTRHeader;
+
 /**
  * Created by suanmiao on 14-11-3.
  */
@@ -29,15 +32,19 @@ public interface IPullToRefresh {
    */
   public void onRefreshComplete();
 
-  public boolean isLoadEnable();
-
-  public void setLoadEnable(boolean enable);
-
   public void onLoadStart();
 
   public void onLoadComplete();
 
+  public boolean isLoadEnable();
+
+  public void setLoadEnable(boolean enable);
+
   public boolean isLoading();
+
+  public void setHeader(IPTRHeader header);
+
+  public void setFooter(IPTRFooter footer);
 
   public void setContinuousPulling(boolean continous);
 }

@@ -4,35 +4,29 @@ package me.suanmiao.ptrexample.ui.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 
-import com.android.volley.VolleyError;
 import com.octo.android.robospice.persistence.exception.SpiceException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.InjectView;
-import me.suanmiao.common.io.http.VolleyCommonListener;
 import me.suanmiao.common.io.http.robospiece.api.BaseFormResult;
 import me.suanmiao.common.ui.adapter.listview.BaseListAdapter;
 import me.suanmiao.common.ui.fragment.AbstractBaseFragment;
 import me.suanmiao.common.ui.mvc.ViewModel.BaseViewModel;
-import me.suanmiao.ptrlistview.PtrListView;
 import me.suanmiao.ptrexample.R;
-import me.suanmiao.ptrexample.io.http.requests.ChannelRequest;
 import me.suanmiao.ptrexample.ui.adapter.listview.ExampleListAdapter;
 import me.suanmiao.ptrexample.ui.mvc.Model.ArticleModel;
-import me.suanmiao.ptrexample.ui.mvc.Model.ChannelModel;
 import me.suanmiao.ptrexample.ui.mvc.Model.ExampleItemModel;
-import me.suanmiao.ptrexample.ui.widget.MieHeader;
+import me.suanmiao.ptrlistview.PtrListView;
 
 
 /**
  * Created by suanmiao on 14-12-2.
  */
-public class ArticleListFragment extends AbstractBaseFragment {
+public class NormalListFragment extends AbstractBaseFragment {
 
   @InjectView(R.id.list_main_article)
   PtrListView listMainArticle;
@@ -93,8 +87,6 @@ public class ArticleListFragment extends AbstractBaseFragment {
     listMainArticle.setOnLoadListener(loadListener);
     listMainArticle.setOnScrollListener(listAdapter);
     listMainArticle.setAdapter(listAdapter);
-    listMainArticle.setHeaderLayout(new MieHeader(getActivity()));
-    listMainArticle.setContinuousPulling(true);
   }
 
   private BaseViewModel.UIChangeListener mUiChangeListener = new BaseViewModel.UIChangeListener() {
@@ -141,36 +133,18 @@ public class ArticleListFragment extends AbstractBaseFragment {
     mHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        listAdapter.setData(mockeup());
+        listAdapter.setData(mockUp());
         listMainArticle.onRefreshComplete();
       }
     }, 2000);
-    String url = "http://zhihurss.miantiao.me/zhihuzhuanlan/taosay";
-    ChannelRequest request = new ChannelRequest(url);
-    executeRequest(request, new VolleyCommonListener<ChannelModel>() {
-      @Override
-      public void onErrorResponse(VolleyError error) {
-        Log.e("SUAN", "response error " + error);
-      }
-
-      @Override
-      public void onResponse(ChannelModel response) {
-        Log.e("SUAN", "response success " + response + "|" + response.title + "|"
-                + response.itemList);
-        for (ArticleModel articleModel : response.itemList) {
-          // Log.e("SUAN", "article " + articleModel + "|" + articleModel.title + "|"
-          // + articleModel.pubDate + "|" + DateUtil.parsePubdateDate(articleModel.pubDate));
-        }
-      }
-    });
-  }
+ }
 
   private void loadData() {
     listMainArticle.onLoadStart();
     mHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        listAdapter.addData(mockeup());
+        listAdapter.addData(mockUp());
         listMainArticle.onLoadComplete();
       }
     }, 2000);
@@ -194,7 +168,7 @@ public class ArticleListFragment extends AbstractBaseFragment {
     super.onDetach();
   }
 
-  private List<ExampleItemModel> mockeup() {
+  private List<ExampleItemModel> mockUp() {
     List<ExampleItemModel> itemModels = new ArrayList<>();
     for (int i = 0; i < 20; i++) {
       ExampleItemModel model = new ExampleItemModel(random(image), random(texts));

@@ -19,10 +19,6 @@ public abstract class BaseTitleActivity extends BaseActivity {
     protected abstract int getContentViewId();
 
     private void setupActionBar(){
-//        ActionBar actionBar = getActionBar();
-//        actionBar.setDisplayShowTitleEnabled(false);
-//        actionBar.setDisplayUseLogoEnabled(false);
-//        actionBar.setDisplayShowCustomEnabled(true);
     }
 
 

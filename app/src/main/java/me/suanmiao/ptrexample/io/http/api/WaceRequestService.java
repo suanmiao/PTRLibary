@@ -1,7 +1,5 @@
 package me.suanmiao.ptrexample.io.http.api;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.octo.android.robospice.retrofit.RetrofitGsonSpiceService;
 import com.squareup.okhttp.OkHttpClient;
@@ -33,7 +31,6 @@ public class WaceRequestService extends RetrofitGsonSpiceService {
             restAdapterField[2].setAccessible(true);
             restAdapterField[2].set(this, restAdapter);
         } catch (IllegalAccessException e) {
-            Log.e("SUAN", "illegal access " + e);
             e.printStackTrace();
         }
 
