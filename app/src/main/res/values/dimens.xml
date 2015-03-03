@@ -59,7 +59,6 @@
     <dimen name="default_hint_size">15dp</dimen>
 
     <!--ptr-->
-    <dimen name="header_total_height">420dp</dimen>
-    <dimen name="header_refresh_height">100dp</dimen>
+    <dimen name="header_refresh_height">80dp</dimen>
 
 </resources>

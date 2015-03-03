@@ -1,6 +1,7 @@
 package me.suanmiao.ptrlistview.header;
 
 import android.view.View;
+import android.view.ViewGroup;
 
 import me.suanmiao.ptrlistview.IPullToRefresh;
 import me.suanmiao.ptrlistview.PTRListView;
@@ -11,13 +12,18 @@ import me.suanmiao.ptrlistview.PTRListView;
 public interface IPTRHeader extends PTRListView.PullProgressListener {
 
   /**
-   * 
-   * @return the total height of header ,include all the space(height) that header content display
-   *         for example ,you can pull header in any distance ,but the header will have a exactly
-   *         display area
-   *         this is the height of area
+   * @return the height of header
    */
-  public int getHeaderTotalHeight();
+  public int getHeaderHeight();
+
+  /**
+   * called after header layout is measured ,to give you a exact height of the header ,or if you
+   * have a measured height already,you can ignore it
+   * 
+   * @param measuredHeight the measured height we get after measure
+   */
+
+  public void afterHeaderMeasured(int measuredHeight);
 
   /**
    * 
@@ -27,13 +33,19 @@ public interface IPTRHeader extends PTRListView.PullProgressListener {
 
   public int getHeaderCurrentPaddingTop();
 
-  public View getHeaderLayout();
+  public View getHeaderLayout(ViewGroup container);
 
-  public void onPull(float progress, IPullToRefresh.REFRESH_STATE refreshState);
+  public int onPull(float progress, IPullToRefresh.REFRESH_STATE refreshState, boolean stateChanged);
 
   public void onPullCancel();
 
   public void onRefreshStart();
 
   public void onInit();
+
+  /**
+   * @param currentPullDistance the distance in touch position
+   * @return ratio to be divided by real distance
+   */
+  public float getPullRatio(float currentPullDistance);
 }

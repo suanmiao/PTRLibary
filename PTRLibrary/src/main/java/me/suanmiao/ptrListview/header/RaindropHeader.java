@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
@@ -63,10 +64,8 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
      * TODO
      * must add a child whose layout param is specific
      */
-    LinearLayout holderLayout = new LinearLayout(context);
-    holderLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+    setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
         context.getResources().getDimensionPixelSize(R.dimen.rain_drop_header_total_height)));
-    this.addView(holderLayout);
 
     contentFillColor = getResources().getColor(R.color.water_drop_fill_color);
     outlineColor = getResources().getColor(R.color.water_drop_border_color);
@@ -84,87 +83,83 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
   }
 
   @Override
-  public void onPull(float progress, IPullToRefresh.REFRESH_STATE refreshState) {
+  public int onPull(float progress, IPullToRefresh.REFRESH_STATE refreshState, boolean stateChanged) {
     switch (refreshState) {
       case RELEASE_TO_REFRESH: {
-        paddingTop = (int) (-getHeaderTotalHeight() + progress * getHeaderRefreshingHeight());
+        paddingTop = (int) (-getHeaderHeight() + progress * getHeaderRefreshingHeight());
         int dropHeight =
             (int) (getHeaderRefreshingHeight() * progress);
         if (!shrinking && !inChangeable) {
           if (dropHeight > getResources().getDimensionPixelSize(R.dimen.water_drop_max_height)) {
             shrink();
-          } else if (dropHeight >= waterDropWidth+waterDropMaringTop) {
-            this.waterDropHeight = dropHeight-waterDropMaringTop;
+          } else if (dropHeight >= waterDropWidth + waterDropMaringTop) {
+            this.waterDropHeight = dropHeight - waterDropMaringTop;
           }
           invalidate();
         }
         break;
       }
       case PULL_TO_REFRESH: {
-        paddingTop = (int) (-getHeaderTotalHeight() + progress * getHeaderRefreshingHeight());
+        paddingTop = (int) (-getHeaderHeight() + progress * getHeaderRefreshingHeight());
         int dropHeight =
             (int) (getHeaderRefreshingHeight() * progress);
         if (!shrinking && !inChangeable) {
           if (dropHeight > getResources().getDimensionPixelSize(R.dimen.water_drop_max_height)) {
             shrink();
-          } else if (dropHeight >= waterDropWidth+waterDropMaringTop) {
-            this.waterDropHeight = dropHeight-waterDropMaringTop;
+          } else if (dropHeight >= waterDropWidth + waterDropMaringTop) {
+            this.waterDropHeight = dropHeight - waterDropMaringTop;
           }
           invalidate();
         }
         break;
       }
       case DONE: {
-        paddingTop = -getHeaderTotalHeight();
+        paddingTop = -getHeaderHeight();
         if (!inChangeable) {
           shrink();
         }
         break;
       }
       case REFRESHING: {
-        paddingTop = -(getHeaderTotalHeight() - getHeaderRefreshingHeight());
+        paddingTop = -(getHeaderHeight() - getHeaderRefreshingHeight());
         if (!inChangeable) {
           shrink();
         }
         break;
       }
     }
-    setPadding(0, paddingTop, 0, 0);
+    return paddingTop;
   }
 
   @Override
   public void onPullCancel() {
     inChangeable = false;
-    animatePaddingTop(-getHeaderTotalHeight());
   }
 
   @Override
   public void onRefreshStart() {
-    animatePaddingTop(-(getHeaderTotalHeight() - getHeaderRefreshingHeight()));
+    // /TODO
+    Log.e("SUAN", "raindrop " + getMeasuredHeight() + "|" + getHeaderRefreshingHeight());
   }
 
   @Override
   public void onInit() {
     inChangeable = false;
-    setPadding(0, -getHeaderTotalHeight(), 0, 0);
-  }
-
-  public void animatePaddingTop(int to) {
-    ValueAnimator resetAnimator =
-        ValueAnimator.ofInt(paddingTop, to).setDuration(RESET_TOTAL_DURATION);
-    resetAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-      @Override
-      public void onAnimationUpdate(ValueAnimator animation) {
-        paddingTop = (Integer) animation.getAnimatedValue();
-        setPadding(0, paddingTop, 0, 0);
-      }
-    });
-    resetAnimator.start();
   }
 
   @Override
-  public int getHeaderTotalHeight() {
+  public float getPullRatio(float currentPullDistance) {
+    float ratio = currentPullDistance / getHeaderRefreshingHeight();
+    return (float) Math.pow(ratio, 0.5);
+  }
+
+  @Override
+  public int getHeaderHeight() {
     return getResources().getDimensionPixelSize(R.dimen.rain_drop_header_total_height);
+  }
+
+  @Override
+  public void afterHeaderMeasured(int measuredHeight) {
   }
 
   @Override
@@ -178,7 +173,7 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
   }
 
   @Override
-  public View getHeaderLayout() {
+  public View getHeaderLayout(ViewGroup container) {
     return this;
   }
 
@@ -412,8 +407,8 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
     // draw outline
     paint.setColor(outlineColor);
     paint.setStyle(Paint.Style.FILL);
-//    paint.setStrokeWidth(getResources().getDimensionPixelSize(
-//        R.dimen.water_drop_border_stroke_width));
+    // paint.setStrokeWidth(getResources().getDimensionPixelSize(
+    // R.dimen.water_drop_border_stroke_width));
     canvas.drawPath(outlinePath, paint);
   }
 

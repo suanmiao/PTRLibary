@@ -1,15 +1,16 @@
 package me.suanmiao.ptrlistview.header;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import me.suanmiao.ptrlistview.IPullToRefresh;
+import me.suanmiao.ptrlistview.PTRListView;
 import me.suanmiao.ptrlistview.R;
 
 /**
@@ -20,13 +21,13 @@ public class DefaultHeader implements IPTRHeader {
   private Context mContext;
 
   public int paddingTop = 0;
-  public static final long RESET_TOTAL_DURATION = 300;
   private View headerLayout;
   private TextView ptrHeaderTipTextView;
   private ImageView ptrHeaderArrowImageView;
   private ImageView ptrHeaderCircleImageView;
   private RotateAnimation circleAnimation;
   private static final long ARROW_ANIMATION_DURATION = 300;
+  private int headerHeight;
 
   public DefaultHeader(Context context) {
     mContext = context;
@@ -36,7 +37,7 @@ public class DefaultHeader implements IPTRHeader {
   private void initLayout() {
     LayoutInflater inflater =
         (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    headerLayout =  inflater.inflate(
+    headerLayout = inflater.inflate(
         R.layout.ptr_header_layout, null);
     ptrHeaderTipTextView = (TextView) headerLayout
         .findViewById(R.id.ptr_header_text_tip);
@@ -55,38 +56,43 @@ public class DefaultHeader implements IPTRHeader {
   }
 
   @Override
-  public View getHeaderLayout() {
+  public View getHeaderLayout(ViewGroup container) {
     return headerLayout;
   }
 
   @Override
-  public void onPull(float progress, IPullToRefresh.REFRESH_STATE refreshState) {
+  public int onPull(float progress, IPullToRefresh.REFRESH_STATE refreshState, boolean stateChanged) {
     switch (refreshState) {
       case RELEASE_TO_REFRESH:
-        paddingTop = (int) (-getHeaderTotalHeight() + getHeaderRefreshingHeight() * progress);
-        ptrHeaderArrowImageView.setVisibility(View.VISIBLE);
-        ptrHeaderCircleImageView.clearAnimation();
-        ptrHeaderCircleImageView.setVisibility(View.GONE);
-        ptrHeaderTipTextView.setVisibility(View.VISIBLE);
-        ptrHeaderArrowImageView.animate().rotation(180).setDuration(ARROW_ANIMATION_DURATION)
-            .start();
-        ptrHeaderTipTextView
-            .setText(mContext.getResources().getString(R.string.release_to_refresh));
+        paddingTop = (int) (-headerHeight + getHeaderRefreshingHeight() * progress);
+        if (stateChanged) {
+          ptrHeaderArrowImageView.setVisibility(View.VISIBLE);
+          ptrHeaderCircleImageView.clearAnimation();
+          ptrHeaderCircleImageView.setVisibility(View.GONE);
+          ptrHeaderTipTextView.setVisibility(View.VISIBLE);
+          ptrHeaderArrowImageView.animate().rotation(180).setDuration(ARROW_ANIMATION_DURATION)
+              .start();
+          ptrHeaderTipTextView
+              .setText(mContext.getResources().getString(R.string.release_to_refresh));
+        }
         break;
       case PULL_TO_REFRESH:
-        paddingTop = (int) (-getHeaderTotalHeight() + getHeaderRefreshingHeight() * progress);
-        ptrHeaderCircleImageView.clearAnimation();
-        ptrHeaderCircleImageView.setVisibility(View.GONE);
-        ptrHeaderTipTextView.setVisibility(View.VISIBLE);
-        ptrHeaderArrowImageView.clearAnimation();
-        ptrHeaderArrowImageView.setVisibility(View.VISIBLE);
-        // if the state comes from "release to refresh",
-        // there should be a back animation for arrow
-        ptrHeaderArrowImageView.animate().rotation(0).setDuration(ARROW_ANIMATION_DURATION).start();
-        ptrHeaderTipTextView.setText(mContext.getResources().getString(R.string.pull_to_refresh));
+        paddingTop = (int) (-headerHeight + getHeaderRefreshingHeight() * progress);
+        if (stateChanged) {
+          ptrHeaderCircleImageView.clearAnimation();
+          ptrHeaderCircleImageView.setVisibility(View.GONE);
+          ptrHeaderTipTextView.setVisibility(View.VISIBLE);
+          ptrHeaderArrowImageView.clearAnimation();
+          ptrHeaderArrowImageView.setVisibility(View.VISIBLE);
+          // if the state comes from "release to refresh",
+          // there should be a back animation for arrow
+          ptrHeaderArrowImageView.animate().rotation(0).setDuration(ARROW_ANIMATION_DURATION)
+              .start();
+          ptrHeaderTipTextView.setText(mContext.getResources().getString(R.string.pull_to_refresh));
+        }
         break;
       case REFRESHING:
-        paddingTop = -(getHeaderTotalHeight() - getHeaderRefreshingHeight());
+        paddingTop = -(headerHeight - getHeaderRefreshingHeight());
         ptrHeaderCircleImageView.setVisibility(View.VISIBLE);
         ptrHeaderCircleImageView.clearAnimation();
         ptrHeaderCircleImageView.startAnimation(circleAnimation);
@@ -95,43 +101,43 @@ public class DefaultHeader implements IPTRHeader {
         ptrHeaderTipTextView.setText(mContext.getResources().getString(R.string.refreshing));
         break;
       case DONE:
-        paddingTop = -getHeaderTotalHeight();
+        paddingTop = -headerHeight;
         ptrHeaderCircleImageView.setVisibility(View.GONE);
         ptrHeaderArrowImageView.clearAnimation();
         ptrHeaderArrowImageView.setImageResource(R.drawable.ptr_arrow);
         ptrHeaderTipTextView.setText(mContext.getResources().getString(R.string.pull_to_refresh));
         break;
     }
-    setPadding(0, paddingTop, 0, 0);
-  }
-
-  private void setPadding(int l, int t, int r, int b) {
-    headerLayout.setPadding(l, t, r, b);
+    return paddingTop;
   }
 
   @Override
-  public void onPullCancel() {
-    animatePaddingTop(-getHeaderTotalHeight());
+  public void onPullCancel() {}
+
+  @Override
+  public void onRefreshStart() {}
+
+  @Override
+  public void onInit() {}
+
+  @Override
+  public float getPullRatio(float currentPullDistance) {
+    return PTRListView.DEFAULT_PULL_RATIO;
   }
 
   @Override
-  public void onRefreshStart() {
-    animatePaddingTop(-(getHeaderTotalHeight() - getHeaderRefreshingHeight()));
+  public int getHeaderHeight() {
+    return headerHeight;
   }
 
   @Override
-  public void onInit() {
-    setPadding(0, -getHeaderTotalHeight(), 0, 0);
-  }
-
-  @Override
-  public int getHeaderTotalHeight() {
-    return mContext.getResources().getDimensionPixelSize(R.dimen.default_header_height);
+  public void afterHeaderMeasured(int measuredHeight) {
+    this.headerHeight = measuredHeight;
   }
 
   @Override
   public int getHeaderRefreshingHeight() {
-    return mContext.getResources().getDimensionPixelSize(R.dimen.default_header_height);
+    return mContext.getResources().getDimensionPixelSize(R.dimen.default_header_refreshing_height);
   }
 
   @Override
@@ -139,16 +145,5 @@ public class DefaultHeader implements IPTRHeader {
     return paddingTop;
   }
 
-  public void animatePaddingTop(int to) {
-    ValueAnimator resetAnimator =
-        ValueAnimator.ofInt(paddingTop, to).setDuration(RESET_TOTAL_DURATION);
-    resetAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-      @Override
-      public void onAnimationUpdate(ValueAnimator animation) {
-        paddingTop = (Integer) animation.getAnimatedValue();
-        setPadding(0, paddingTop, 0, 0);
-      }
-    });
-    resetAnimator.start();
-  }
+
 }

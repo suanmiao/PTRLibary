@@ -11,3 +11,8 @@
 ## Version:0.1.3
 ///TODO
 1.PTR support for ViewPager
+
+
+
+##Issues:
+1.Can't pull when header height is wrong

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="default_header_height" >60dp</dimen>
+    <dimen name="default_header_refreshing_height" >60dp</dimen>
     <dimen name="footer_height" >60dp</dimen>
     <dimen name="water_drop_border_stroke_width" >3dp</dimen>
 

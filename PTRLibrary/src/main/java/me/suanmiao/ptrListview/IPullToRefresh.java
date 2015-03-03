@@ -47,4 +47,6 @@ public interface IPullToRefresh {
   public void setFooter(IPTRFooter footer);
 
   public void setContinuousPulling(boolean continous);
+
+  public void setCustomisePullRatioEnable(boolean enable);
 }
