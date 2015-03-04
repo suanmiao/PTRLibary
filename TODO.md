@@ -14,5 +14,6 @@
 
 
 
-##Issues:
-1.Can't pull when header height is wrong
+##Feature List
+1.Add example code
+2.Broaden header customisation,such as Lolipop PTR style

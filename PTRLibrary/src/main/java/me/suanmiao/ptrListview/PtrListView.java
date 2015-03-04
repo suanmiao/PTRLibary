@@ -3,7 +3,6 @@ package me.suanmiao.ptrlistview;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -61,8 +60,6 @@ public class PTRListView extends ListView implements
   private boolean loadEnable = true;
   private boolean customisePullRatioEnable = false;
   private boolean continuousPulling = false;
-
-  private static final int VISIBLE_SLOP = 30;
 
   public PTRListView(Context context) {
     super(context);
@@ -372,7 +369,7 @@ public class PTRListView extends ListView implements
     }
     headerContainer.addView(headerContent);
 
-    measureHeader(headerContainer);
+    PTRUtil.measureHeader(headerContainer);
     headerHeight = headerContainer.getMeasuredHeight();
     header.afterHeaderMeasured(headerHeight);
     mHeader.onInit();
@@ -410,7 +407,7 @@ public class PTRListView extends ListView implements
   @Override
   public void onScrollStateChanged(AbsListView view, int scrollState) {
     if (scrollState == SCROLL_STATE_IDLE && lastItemVisible && onLoadListener != null
-        && itemTakeFullPage() && loadEnable) {
+        && PTRUtil.itemTakeFullPage(this) && loadEnable) {
       onLoadListener.onLastItemVisible();
     }
 
@@ -419,27 +416,6 @@ public class PTRListView extends ListView implements
     }
   }
 
-  /**
-   * to judge whether items take full page
-   * if not ,even if last item is visible ,we should not call listener
-   *
-   * @return whether items take up full page
-   */
-  private boolean itemTakeFullPage() {
-    if (getChildCount() > 0) {
-      int totalHeight = 0;
-      for (int i = 0; i < getChildCount(); i++) {
-        View child = getChildAt(i);
-        Rect childRect = new Rect();
-        child.getDrawingRect(childRect);
-        totalHeight += childRect.height();
-      }
-      Rect visibleRect = new Rect();
-      getGlobalVisibleRect(visibleRect);
-      return (visibleRect.bottom - visibleRect.top) - totalHeight < VISIBLE_SLOP;
-    }
-    return false;
-  }
 
   @Override
   public void onScroll(AbsListView view, int firstVisibleItem,
@@ -469,31 +445,6 @@ public class PTRListView extends ListView implements
   private void setHeaderPaddingTop(int paddingTop) {
     headerContainer.setPadding(headerContainer.getPaddingLeft(), paddingTop,
         headerContainer.getPaddingRight(), headerContainer.getPaddingBottom());
-  }
-
-  private void measureHeader(View child) {
-    try {
-      ViewGroup.LayoutParams p = child.getLayoutParams();
-      if (p == null) {
-        p = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
-            AbsListView.LayoutParams.WRAP_CONTENT);
-        child.setLayoutParams(p);
-      }
-
-      int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0 + 0, p.width);
-      int lpHeight = p.height;
-      int childHeightSpec;
-      if (lpHeight > 0) {
-        childHeightSpec = View.MeasureSpec.makeMeasureSpec(lpHeight,
-            View.MeasureSpec.EXACTLY);
-      } else {
-        childHeightSpec = View.MeasureSpec.makeMeasureSpec(0,
-            View.MeasureSpec.UNSPECIFIED);
-      }
-      child.measure(childWidthSpec, childHeightSpec);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   private void animatePaddingTop(int to) {
