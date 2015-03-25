@@ -7,7 +7,7 @@ import me.suanmiao.ptrlistview.header.IPTRHeader;
  * Created by suanmiao on 14-11-3.
  */
 public interface IPullToRefresh {
-  static enum REFRESH_STATE {
+  static enum STATE {
     RELEASE_TO_REFRESH,
     PULL_TO_REFRESH,
     REFRESHING,
@@ -15,7 +15,7 @@ public interface IPullToRefresh {
     LOADING
   }
 
-  public REFRESH_STATE getRefreshState();
+  public STATE getRefreshState();
 
   public boolean isRefreshEnable();
 

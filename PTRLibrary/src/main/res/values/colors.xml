@@ -2,4 +2,10 @@
 <resources>
     <color name="water_drop_border_color">#00BCD4</color>
     <color name="water_drop_fill_color">#00BCD4</color>
+
+    <color name="refresh_red">#DE5338</color>
+    <color name="refresh_blue">#1081EF</color>
+    <color name="refresh_green">#00A56B</color>
+    <color name="refresh_yellow">#FFC92F</color>
+
 </resources>

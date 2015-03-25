@@ -4,12 +4,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import me.suanmiao.ptrlistview.IPullToRefresh;
-import me.suanmiao.ptrlistview.PTRListView;
 
 /**
  * Created by suanmiao on 14-11-3.
  */
-public interface IPTRHeader extends PTRListView.PullProgressListener {
+public interface IPTRHeader {
 
   /**
    * @return the height of header
@@ -31,17 +30,28 @@ public interface IPTRHeader extends PTRListView.PullProgressListener {
    */
   public int getHeaderRefreshingHeight();
 
-  public int getHeaderCurrentPaddingTop();
+  public View getHeaderContent(ViewGroup headerContainer);
 
-  public View getHeaderLayout(ViewGroup container);
-
-  public int onPull(float progress, IPullToRefresh.REFRESH_STATE refreshState, boolean stateChanged);
+  /**
+   * 
+   * @param progress total progress of user's touch,progress = touchDistance/headerRefreshHeight
+   * @param refreshState current state of PTR
+   * @param stateChanged whether the state of PTR changed
+   */
+  public void onPull(float progress, IPullToRefresh.STATE refreshState,
+      boolean stateChanged);
 
   public void onPullCancel();
 
   public void onRefreshStart();
 
-  public void onInit();
+  public void onRefreshComplete();
+
+  /**
+   *
+   * @param headerContainer container of the header,real target that we should operate on
+   */
+  public void onInit(ViewGroup headerContainer);
 
   /**
    * @param currentPullDistance the distance in touch position

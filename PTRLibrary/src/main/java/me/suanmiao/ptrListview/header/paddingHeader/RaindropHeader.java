@@ -1,4 +1,4 @@
-package me.suanmiao.ptrlistview.header;
+package me.suanmiao.ptrlistview.header.paddingHeader;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
@@ -18,6 +17,7 @@ import java.util.ArrayList;
 
 import me.suanmiao.ptrlistview.IPullToRefresh;
 import me.suanmiao.ptrlistview.R;
+import me.suanmiao.ptrlistview.header.IPTRHeader;
 
 
 /**
@@ -25,11 +25,13 @@ import me.suanmiao.ptrlistview.R;
  */
 public class RaindropHeader extends LinearLayout implements IPTRHeader {
 
+  private ViewGroup headerContainer;
+  private int headerHeight;
   public static final long RESET_TOTAL_DURATION = 300;
   private static final long ANIMATION_DURATION = 500;
   private boolean shrinking = false;
   private boolean inChangeable = false;
-  private int paddingTop;
+  private int currentPaddingTop;
   private int waterDropMaringTop;
 
   private int waterDropHeight;
@@ -61,7 +63,6 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
 
   public void init(Context context) {
     /**
-     * TODO
      * must add a child whose layout param is specific
      */
     setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -83,10 +84,10 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
   }
 
   @Override
-  public int onPull(float progress, IPullToRefresh.REFRESH_STATE refreshState, boolean stateChanged) {
+  public void onPull(float progress, IPullToRefresh.STATE refreshState, boolean stateChanged) {
     switch (refreshState) {
       case RELEASE_TO_REFRESH: {
-        paddingTop = (int) (-getHeaderHeight() + progress * getHeaderRefreshingHeight());
+        currentPaddingTop = (int) (-getHeaderHeight() + progress * getHeaderRefreshingHeight());
         int dropHeight =
             (int) (getHeaderRefreshingHeight() * progress);
         if (!shrinking && !inChangeable) {
@@ -100,7 +101,7 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
         break;
       }
       case PULL_TO_REFRESH: {
-        paddingTop = (int) (-getHeaderHeight() + progress * getHeaderRefreshingHeight());
+        currentPaddingTop = (int) (-getHeaderHeight() + progress * getHeaderRefreshingHeight());
         int dropHeight =
             (int) (getHeaderRefreshingHeight() * progress);
         if (!shrinking && !inChangeable) {
@@ -114,36 +115,61 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
         break;
       }
       case DONE: {
-        paddingTop = -getHeaderHeight();
+        currentPaddingTop = -getHeaderHeight();
         if (!inChangeable) {
           shrink();
         }
         break;
       }
       case REFRESHING: {
-        paddingTop = -(getHeaderHeight() - getHeaderRefreshingHeight());
+        currentPaddingTop = -(getHeaderHeight() - getHeaderRefreshingHeight());
         if (!inChangeable) {
           shrink();
         }
         break;
       }
     }
-    return paddingTop;
+    setHeaderPaddingTop(currentPaddingTop);
+  }
+
+  private void animatePaddingTop(int to) {
+    ValueAnimator resetAnimator =
+        ValueAnimator.ofInt(currentPaddingTop, to).setDuration(RESET_TOTAL_DURATION);
+    resetAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+      @Override
+      public void onAnimationUpdate(ValueAnimator animation) {
+        currentPaddingTop = (Integer) animation.getAnimatedValue();
+        setHeaderPaddingTop(currentPaddingTop);
+      }
+    });
+    resetAnimator.start();
+  }
+
+  protected void setHeaderPaddingTop(int paddingTop) {
+    headerContainer.setPadding(headerContainer.getPaddingLeft(), paddingTop,
+        headerContainer.getPaddingRight(), headerContainer.getPaddingBottom());
   }
 
   @Override
   public void onPullCancel() {
     inChangeable = false;
+    animatePaddingTop(-headerHeight);
   }
 
   @Override
   public void onRefreshStart() {
-    // /TODO
-    Log.e("SUAN", "raindrop " + getMeasuredHeight() + "|" + getHeaderRefreshingHeight());
+    animatePaddingTop(-headerHeight + getHeaderRefreshingHeight());
   }
 
   @Override
-  public void onInit() {
+  public void onRefreshComplete() {
+    inChangeable = false;
+    animatePaddingTop(-headerHeight);
+  }
+
+  @Override
+  public void onInit(ViewGroup headerContainer) {
+    this.headerContainer = headerContainer;
     inChangeable = false;
   }
 
@@ -155,11 +181,12 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
 
   @Override
   public int getHeaderHeight() {
-    return getResources().getDimensionPixelSize(R.dimen.rain_drop_header_total_height);
+    return headerHeight;
   }
 
   @Override
   public void afterHeaderMeasured(int measuredHeight) {
+    headerHeight = measuredHeight;
   }
 
   @Override
@@ -168,12 +195,7 @@ public class RaindropHeader extends LinearLayout implements IPTRHeader {
   }
 
   @Override
-  public int getHeaderCurrentPaddingTop() {
-    return paddingTop;
-  }
-
-  @Override
-  public View getHeaderLayout(ViewGroup container) {
+  public View getHeaderContent(ViewGroup headerContainer) {
     return this;
   }
 

@@ -1,6 +1,5 @@
 package me.suanmiao.ptrlistview;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -14,8 +13,8 @@ import android.widget.RelativeLayout;
 
 import me.suanmiao.ptrlistview.footer.DefaultFooter;
 import me.suanmiao.ptrlistview.footer.IPTRFooter;
-import me.suanmiao.ptrlistview.header.DefaultHeader;
 import me.suanmiao.ptrlistview.header.IPTRHeader;
+import me.suanmiao.ptrlistview.header.marginHeader.MarginTopHeader;
 
 
 /**
@@ -25,10 +24,8 @@ public class PTRListView extends ListView implements
     AbsListView.OnScrollListener, IPullToRefresh {
 
   public static final float DEFAULT_PULL_RATIO = 2f;
-  public static final long RESET_TOTAL_DURATION = 300;
   private IPTRHeader mHeader;
   private RelativeLayout headerContainer;
-  private int currentPaddingTop;
   private IPTRFooter mFooter;
   private int headerHeight;
 
@@ -53,8 +50,8 @@ public class PTRListView extends ListView implements
 
   private boolean catchMotionEvent;
   private boolean isLoading = false;
-  private REFRESH_STATE refreshState;
-  private REFRESH_STATE lastRefreshState;
+  private STATE refreshState;
+  private STATE lastRefreshState;
 
   private boolean refreshEnable = true;
   private boolean loadEnable = true;
@@ -79,11 +76,11 @@ public class PTRListView extends ListView implements
   private void init() {
     super.setOnScrollListener(this);
     // init state
-    refreshState = REFRESH_STATE.DONE;
+    refreshState = STATE.DONE;
     // if catch the event
     catchMotionEvent = false;
 
-    setHeader(new DefaultHeader(getContext()));
+    setHeader(new MarginTopHeader(getContext()));
     setFooter(new DefaultFooter(getContext()));
   }
 
@@ -111,13 +108,13 @@ public class PTRListView extends ListView implements
           break;
         case MotionEvent.ACTION_CANCEL:
         case MotionEvent.ACTION_UP:
-          if (refreshState != REFRESH_STATE.REFRESHING && refreshState != REFRESH_STATE.LOADING) {
-            if (refreshState == REFRESH_STATE.PULL_TO_REFRESH) {
-              refreshState = REFRESH_STATE.DONE;
+          if (refreshState != STATE.REFRESHING && refreshState != STATE.LOADING) {
+            if (refreshState == STATE.PULL_TO_REFRESH) {
+              refreshState = STATE.DONE;
               headerPullCancel();
             }
-            if (refreshState == REFRESH_STATE.RELEASE_TO_REFRESH) {
-              refreshState = REFRESH_STATE.REFRESHING;
+            if (refreshState == STATE.RELEASE_TO_REFRESH) {
+              refreshState = STATE.REFRESHING;
               headerRefreshStart();
               if (refreshListener != null) {
                 refreshListener.onRefresh();
@@ -141,10 +138,10 @@ public class PTRListView extends ListView implements
               if (currentPullingY > 0) {
                 if (currentPullingY / getPullRatio(currentPullingY) < mHeader
                     .getHeaderRefreshingHeight()) {
-                  refreshState = REFRESH_STATE.PULL_TO_REFRESH;
+                  refreshState = STATE.PULL_TO_REFRESH;
                 }
               } else {
-                refreshState = REFRESH_STATE.DONE;
+                refreshState = STATE.DONE;
               }
               setPullProgress(currentPullingY / getPullRatio(currentPullingY)
                   / (float) mHeader.getHeaderRefreshingHeight());
@@ -154,16 +151,16 @@ public class PTRListView extends ListView implements
               if (currentPullingY / getPullRatio(currentPullingY) >= mHeader
                   .getHeaderRefreshingHeight()) {
                 // change state to rtr
-                refreshState = REFRESH_STATE.RELEASE_TO_REFRESH;
+                refreshState = STATE.RELEASE_TO_REFRESH;
               } else if (currentPullingY <= 0) {
-                refreshState = REFRESH_STATE.DONE;
+                refreshState = STATE.DONE;
               }
               setPullProgress(currentPullingY / getPullRatio(currentPullingY)
                   / (float) mHeader.getHeaderRefreshingHeight());
               break;
             case DONE:
               if (currentPullingY > 0) {
-                refreshState = REFRESH_STATE.PULL_TO_REFRESH;
+                refreshState = STATE.PULL_TO_REFRESH;
                 setPullProgress((currentPullingY) / getPullRatio(currentPullingY)
                     / (float) mHeader.getHeaderRefreshingHeight());
               }
@@ -195,13 +192,13 @@ public class PTRListView extends ListView implements
           startY = (int) ev.getY();// position of event start
           break;
         case MotionEvent.ACTION_UP:
-          if (refreshState != REFRESH_STATE.REFRESHING && refreshState != REFRESH_STATE.LOADING) {
-            if (refreshState == REFRESH_STATE.PULL_TO_REFRESH) {
-              refreshState = REFRESH_STATE.DONE;
+          if (refreshState != STATE.REFRESHING && refreshState != STATE.LOADING) {
+            if (refreshState == STATE.PULL_TO_REFRESH) {
+              refreshState = STATE.DONE;
               headerPullCancel();
             }
-            if (refreshState == REFRESH_STATE.RELEASE_TO_REFRESH) {
-              refreshState = REFRESH_STATE.REFRESHING;
+            if (refreshState == STATE.RELEASE_TO_REFRESH) {
+              refreshState = STATE.REFRESHING;
               headerRefreshStart();
               if (refreshListener != null) {
                 refreshListener.onRefresh();
@@ -223,10 +220,10 @@ public class PTRListView extends ListView implements
               if ((tempY - startY) > 0) {
                 if ((tempY - startY) / getPullRatio(tempY - startY) < mHeader
                     .getHeaderRefreshingHeight()) {
-                  refreshState = REFRESH_STATE.PULL_TO_REFRESH;
+                  refreshState = STATE.PULL_TO_REFRESH;
                 }
               } else {
-                refreshState = REFRESH_STATE.DONE;
+                refreshState = STATE.DONE;
               }
               setPullProgress((tempY - startY) / getPullRatio(tempY - startY)
                   / (float) mHeader.getHeaderRefreshingHeight());
@@ -236,16 +233,16 @@ public class PTRListView extends ListView implements
               if ((tempY - startY) / getPullRatio(tempY - startY) >= mHeader
                   .getHeaderRefreshingHeight()) {
                 // change state to rtr
-                refreshState = REFRESH_STATE.RELEASE_TO_REFRESH;
+                refreshState = STATE.RELEASE_TO_REFRESH;
               } else if (tempY - startY <= 0) {
-                refreshState = REFRESH_STATE.DONE;
+                refreshState = STATE.DONE;
               }
               setPullProgress((tempY - startY) / getPullRatio(tempY - startY)
                   / (float) mHeader.getHeaderRefreshingHeight());
               break;
             case DONE:
               if (tempY > startY) {
-                refreshState = REFRESH_STATE.PULL_TO_REFRESH;
+                refreshState = STATE.PULL_TO_REFRESH;
                 setPullProgress((tempY - startY) / getPullRatio(tempY - startY)
                     / (float) mHeader.getHeaderRefreshingHeight());
               }
@@ -266,12 +263,10 @@ public class PTRListView extends ListView implements
 
   private void headerPullCancel() {
     mHeader.onPullCancel();
-    animatePaddingTop(-headerHeight);
   }
 
   private void headerRefreshStart() {
     mHeader.onRefreshStart();
-    animatePaddingTop(-headerHeight + mHeader.getHeaderRefreshingHeight());
   }
 
   @Override
@@ -310,7 +305,7 @@ public class PTRListView extends ListView implements
   }
 
   @Override
-  public REFRESH_STATE getRefreshState() {
+  public STATE getRefreshState() {
     return refreshState;
   }
 
@@ -321,15 +316,14 @@ public class PTRListView extends ListView implements
 
   @Override
   public void onRefreshStart() {
-    refreshState = REFRESH_STATE.REFRESHING;
+    refreshState = STATE.REFRESHING;
     setPullProgress(0);
   }
 
   @Override
   public void onRefreshComplete() {
-    refreshState = REFRESH_STATE.DONE;
-    mHeader.onPullCancel();
-    animatePaddingTop(-mHeader.getHeaderHeight());
+    refreshState = STATE.DONE;
+    mHeader.onRefreshComplete();
   }
 
   @Override
@@ -356,13 +350,16 @@ public class PTRListView extends ListView implements
 
   @Override
   public void setHeader(IPTRHeader header) {
+    if (headerContainer != null) {
+      removeHeaderView(headerContainer);
+    }
     this.mHeader = header;
     headerContainer = new RelativeLayout(getContext());
     headerContainer.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.WRAP_CONTENT));
     addHeaderView(headerContainer);
 
-    View headerContent = header.getHeaderLayout(headerContainer);
+    View headerContent = header.getHeaderContent(headerContainer);
     ViewGroup.LayoutParams contentParams = headerContent.getLayoutParams();
     if (contentParams != null) {
       contentParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -372,8 +369,7 @@ public class PTRListView extends ListView implements
     PTRUtil.measureHeader(headerContainer);
     headerHeight = headerContainer.getMeasuredHeight();
     header.afterHeaderMeasured(headerHeight);
-    mHeader.onInit();
-    setHeaderPaddingTop(-headerHeight);
+    mHeader.onInit(headerContainer);
   }
 
   @Override
@@ -416,7 +412,6 @@ public class PTRListView extends ListView implements
     }
   }
 
-
   @Override
   public void onScroll(AbsListView view, int firstVisibleItem,
       int visibleItemCount, int totalItemCount) {
@@ -430,34 +425,40 @@ public class PTRListView extends ListView implements
     }
   }
 
+  @Override
+  protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+    // tricky for margin top header
+    if (mHeader instanceof MarginTopHeader) {
+      if (child.equals(getChildAt(getChildCount() - 1))) {
+        float originalTranslationY = child.getTranslationY();
+        child.setTranslationY(-headerHeight);
+        boolean drawResult = super.drawChild(canvas, child, drawingTime);
+        super.drawChild(canvas, headerContainer, drawingTime);
+        child.setTranslationY(originalTranslationY);
+        return drawResult;
+      } else if (child.equals(headerContainer)) {
+        return true;
+      } else {
+        float originalTranslationY = child.getTranslationY();
+        child.setTranslationY(-headerHeight);
+        boolean drawResult = super.drawChild(canvas, child, drawingTime);
+        child.setTranslationY(originalTranslationY);
+        return drawResult;
+      }
+    } else {
+      return super.drawChild(canvas, child, drawingTime);
+    }
+  }
+
   public void setPullProgress(float progress) {
     boolean stateChanged = lastRefreshState != refreshState;
     if (progressListener != null) {
       progressListener.onPull(progress, refreshState, stateChanged);
     }
     if (mHeader != null) {
-      currentPaddingTop = mHeader.onPull(progress, refreshState, stateChanged);
-      setHeaderPaddingTop(currentPaddingTop);
+      mHeader.onPull(progress, refreshState, stateChanged);
     }
     lastRefreshState = refreshState;
-  }
-
-  private void setHeaderPaddingTop(int paddingTop) {
-    headerContainer.setPadding(headerContainer.getPaddingLeft(), paddingTop,
-        headerContainer.getPaddingRight(), headerContainer.getPaddingBottom());
-  }
-
-  private void animatePaddingTop(int to) {
-    ValueAnimator resetAnimator =
-        ValueAnimator.ofInt(currentPaddingTop, to).setDuration(RESET_TOTAL_DURATION);
-    resetAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-      @Override
-      public void onAnimationUpdate(ValueAnimator animation) {
-        currentPaddingTop = (Integer) animation.getAnimatedValue();
-        setHeaderPaddingTop(currentPaddingTop);
-      }
-    });
-    resetAnimator.start();
   }
 
   public interface OnRefreshListener {
@@ -468,7 +469,4 @@ public class PTRListView extends ListView implements
     public void onLastItemVisible();
   }
 
-  public interface PullProgressListener {
-    public int onPull(float progress, REFRESH_STATE state, boolean stateChanged);
-  }
 }

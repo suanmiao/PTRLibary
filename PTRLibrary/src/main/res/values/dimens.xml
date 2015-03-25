@@ -12,4 +12,7 @@
 
     <dimen name="rain_drop_header_total_height" >140dp</dimen>
 
+    <!--margin header-->
+    <dimen name="circle_size" >50dp</dimen>
+
 </resources>

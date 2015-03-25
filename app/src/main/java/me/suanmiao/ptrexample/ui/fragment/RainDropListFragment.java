@@ -21,7 +21,7 @@ import me.suanmiao.ptrexample.ui.adapter.listview.ExampleListAdapter;
 import me.suanmiao.ptrexample.ui.mvc.Model.ArticleModel;
 import me.suanmiao.ptrexample.ui.mvc.Model.ExampleItemModel;
 import me.suanmiao.ptrlistview.PTRListView;
-import me.suanmiao.ptrlistview.header.RaindropHeader;
+import me.suanmiao.ptrlistview.header.paddingHeader.RaindropHeader;
 
 
 /**

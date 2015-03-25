@@ -9,17 +9,16 @@ import android.view.animation.RotateAnimation;
 
 import me.suanmiao.ptrexample.R;
 import me.suanmiao.ptrlistview.IPullToRefresh;
-import me.suanmiao.ptrlistview.header.AbstractNormalHeader;
+import me.suanmiao.ptrlistview.header.paddingHeader.AbstractPaddingTopHeader;
 
 /**
  * Created by suanmiao on 15/2/27.
  */
-public class MieHeader extends AbstractNormalHeader {
+public class MieHeader extends AbstractPaddingTopHeader {
   private View headerLayout;
   private View headIcon;
   private View bodyIcon;
   private RotateAnimation circleAnimation;
-  private int headerHeight;
 
   public MieHeader(Context context) {
     super(context);
@@ -31,12 +30,12 @@ public class MieHeader extends AbstractNormalHeader {
   }
 
   @Override
-  public View getHeaderLayout(ViewGroup container) {
+  public View getHeaderContent(ViewGroup headerContainer) {
     if (headerLayout == null) {
       LayoutInflater inflater =
           (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       headerLayout = inflater.inflate(
-          R.layout.mie_header_layout, container, false);
+          R.layout.mie_header_layout, headerContainer, false);
       headIcon = headerLayout.findViewById(R.id.mie_head);
       bodyIcon = headerLayout.findViewById(R.id.ic_neck);
 
@@ -51,12 +50,12 @@ public class MieHeader extends AbstractNormalHeader {
   }
 
   @Override
-  public int onPull(float progress, IPullToRefresh.REFRESH_STATE refreshState, boolean changed) {
+  public void onPull(float progress, IPullToRefresh.STATE refreshState, boolean changed) {
     switch (refreshState) {
       case RELEASE_TO_REFRESH:
         float originalValue =
             (getHeaderRefreshingHeight() * progress);
-        paddingTop = (int) (-getHeaderHeight() + originalValue);
+        currentPaddingTop = (int) (-getHeaderHeight() + originalValue);
 
         // float ratio = originalValue / getHeaderRefreshingHeight();
         // paddingTop = (int) (-getHeaderHeight() + originalValue / Math.pow(ratio, 0.5));
@@ -71,7 +70,7 @@ public class MieHeader extends AbstractNormalHeader {
         break;
       case PULL_TO_REFRESH:
         bodyIcon.setAlpha(0);
-        paddingTop = (int) (-getHeaderHeight() + getHeaderRefreshingHeight() * progress);
+        currentPaddingTop = (int) (-getHeaderHeight() + getHeaderRefreshingHeight() * progress);
         if (changed) {
           headIcon.clearAnimation();
           headIcon.animate().rotation(180).setDuration(300).start();
@@ -79,28 +78,23 @@ public class MieHeader extends AbstractNormalHeader {
         break;
       case REFRESHING:
         bodyIcon.setAlpha(0);
-        paddingTop = -(getHeaderHeight() - getHeaderRefreshingHeight());
+        currentPaddingTop = -(getHeaderHeight() - getHeaderRefreshingHeight());
         if (changed) {
           headIcon.startAnimation(circleAnimation);
         }
         break;
       case DONE:
-        paddingTop = -getHeaderHeight();
+        currentPaddingTop = -getHeaderHeight();
         headIcon.clearAnimation();
         break;
     }
-    return paddingTop;
+    setHeaderPaddingTop(currentPaddingTop);
   }
 
   @Override
   public float getPullRatio(float currentPullDistance) {
     float ratio = currentPullDistance / getHeaderRefreshingHeight();
     return (float) Math.pow(ratio, 0.5);
-  }
-
-  @Override
-  public int getHeaderHeight() {
-    return headerHeight;
   }
 
   @Override

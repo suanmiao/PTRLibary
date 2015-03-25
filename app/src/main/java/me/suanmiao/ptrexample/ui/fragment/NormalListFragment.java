@@ -87,6 +87,7 @@ public class NormalListFragment extends AbstractBaseFragment {
     listMainArticle.setOnLoadListener(loadListener);
     listMainArticle.setOnScrollListener(listAdapter);
     listMainArticle.setAdapter(listAdapter);
+//    listMainArticle.setHeader(new MarginTopHeader(getActivity()));
   }
 
   private BaseViewModel.UIChangeListener mUiChangeListener = new BaseViewModel.UIChangeListener() {
@@ -137,7 +138,7 @@ public class NormalListFragment extends AbstractBaseFragment {
         listMainArticle.onRefreshComplete();
       }
     }, 2000);
- }
+  }
 
   private void loadData() {
     listMainArticle.onLoadStart();
